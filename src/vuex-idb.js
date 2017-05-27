@@ -13,11 +13,11 @@ export default function (db, options) {
 	return async store => {
 		let prevState = _.cloneDeep(store.state)
 
-		for(let schema in options.hydrates){
-			const hydrated = await options.hydrates[schema](db)
-			console.log('SCHEME', schema, hydrated)
+		for(let schema in options.hydrators){
+			const hydrated = await options.hydrators[schema]()
 			const substate = { ...store.state[schema], ...hydrated }
 			store.replaceState({ ...store.state, [schema]: substate })
+			console.log('SCHEME', store.state)
 		}
 
 		console.log('HYDRATED')
@@ -28,7 +28,7 @@ export default function (db, options) {
 
 			if(options.mutations[mutation.type]){
 				//console.log('LAUCNH MUTATION', mutation)
-				options.mutations[mutation.type](db, mutation.payload, store)
+				options.mutations[mutation.type](mutation.payload, store)
 			}
 
 			if(mutation.type === 'DELETE_INDEXED_DB'){

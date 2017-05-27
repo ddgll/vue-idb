@@ -2,11 +2,14 @@
 
 import { install, Vue } from './install'
 import Dexie  from 'dexie'
+import { VIDB } from './contants'
 import vuexIndexedDB from './vuex-idb'
-
 import dbOpen from './db-open'
-import defaultMutations from './default-mutations'
-import defaultHydrators from './default-hydrators'
+import defaultMutations from './mutations/defaults'
+import defaultHydrators from './hydrators/defaults'
+import getModules from './modules/defaults'
+
+export { deepFreeze, arrayMax, uuid, jsUcfirst } from './contants'
 
 export default class VueIdb {
   static install
@@ -15,10 +18,8 @@ export default class VueIdb {
   static _plugin
   static _options
 
-  _vm
-
   constructor (options) {
-		this._initDB(this._options)
+		this._initDB(options)
   }
 
   _initDB (options) {
@@ -31,17 +32,17 @@ export default class VueIdb {
     dbOpen(VueIdb._db, options.schemas)
   }
 
-  get plugin() {
-    if(!VueIdb._options.mutations){
-      VueIdb._options.mutations = defaultMutations(VueIdb._options);
-    }
-    if(!VueIdb._options.hydrators){
-      VueIdb._options.hydrators = defaultHydrators(VueIdb._options);
-    }
+  get plugin () {
     if(!VueIdb._plugin){
+      VueIdb._options.mutations = defaultMutations(VueIdb._options, VueIdb._db)
+      VueIdb._options.hydrators = defaultHydrators(VueIdb._options, VueIdb._db)
       VueIdb._plugin = vuexIndexedDB(VueIdb._db, VueIdb._options)
     }
     return VueIdb._plugin
+  }
+
+  get modules () {
+    return getModules(VueIdb._options, VueIdb._db)
   }
 
   get db () { return VueIdb._db }

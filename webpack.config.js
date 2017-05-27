@@ -44,11 +44,6 @@ module.exports = {
       'vue$': 'vue/dist/vue.common.js'
     }
   },
-  externals: {
-    "vue": "vue",
-    "dexie": "dexie",
-    "lodash": "lodash"
-  },
   devServer: {
     historyApiFallback: true,
     noInfo: true
@@ -58,6 +53,13 @@ module.exports = {
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.entry = './src/index.js'
+
+  module.exports.externals = {
+    "vue": "vue",
+    "vuex": "vuex",
+    "dexie": "dexie",
+    "lodash": "lodash"
+  }
 
   module.exports.output = {
     path: path.resolve(__dirname, './dist'),
