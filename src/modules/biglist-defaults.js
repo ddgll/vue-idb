@@ -1,9 +1,12 @@
-import getTypes from '../types/list-types'
+import getTypes from '../types/biglist-types'
+import getListModule from './list-module'
 import { arrayMax, jsUcfirst } from '../contants'
 import filterBy from '../filter-by'
 import orderBy from '../order-by'
 
 export default (name, options, db, api) => {
+	const listModule = getListModule(name, options, db, api)
+
 	const types = getTypes(name)
 
 	const Name = jsUcfirst(name)
@@ -14,44 +17,68 @@ export default (name, options, db, api) => {
 	const _updated_at = options.updated_at ? options.updated_at : 'updated_at'
 
 	const state = {
-		collection: [],
-		selection: [],
+		/*collection: [],
 		loading: false,
 		loaded: false,
 		selected: null,
 		filter: {},
-		sort: _label,
+		sort: null,
 		reverse: false,
-		last: null
+		last: null*/
+		...listModule.state,
+		page: 1,
+		limit: 20,
+		count: 0
+	}
+
+	const blGetters = {
 	}
 
 	// getters
 	const getters = {
-		[`is${Name}Loading`]: state => state.loading,
+		/*[`is${Name}Loading`]: state => state.loading,
 		[`is${Name}Loaded`]: state => state.loaded,
 		[`get${Name}Last`]: state => state.last,
-		[`get${Name}Selection`]: state => state.selection,
-		[`get${Name}SelectionCollection`]: state => state.collection.filter(entity => state.selection.indexOf(entity[_id]) > -1),
-		[`get${Name}SelectionCount`]: state => state.selection.length,
-		[`is${Name}InSelection`]: state => id => (state.selection.indexOf(id) > -1) ? true : false,
-		[`get${Name}`]: state => orderBy(filterBy(state.collection, state.filter), state.sort, state.reverse),
-		[`get${Name}Sorted`]: state => orderBy(state.collection, state.sort, state.reverse),
-		[`get${Name}Filtered`]: state => filterBy(state.collection, state.filter),
+		[`get${Name}`]: state => {
+			return orderBy(filterBy(state.collection, state.filter), state.sort, state.reverse ? true : false)
+		},
+		[`get${Name}Sorted`]: state => {
+			orderBy(state.collection, state.sort, state.reverse ? true : false)
+		},
+		[`get${Name}Filtered`]: state => {
+			filterBy(state.collection, state.filter)
+		},
 		[`get${Name}Original`]: state => state.collection,
 		[`get${Name}Selected`]: state => state.selected !== null ? state.collection[state.selected] : null,
 		[`get${Name}Count`]: state => (field, value) => field ? state.collection.filter(entity => entity[field] === value).length : state.collection.length,
 		[`get${Name}Ids`]: state => (field, value) => field ?  state.collection.filter(entity => entity[field] === value).map(entity => entity[_id]) : state.collection.map(entity => entity[_id]),
-		[`get${Name}Selectable`]: state => orderBy(state.collection.map(entity => { 
+		[`get${Name}Selectable`]: state => state.collection.map(entity => { 
 			return {
 				label: entity[_label], 
 				value: entity[_id] 
 			}
-		}), 'label', false)
+		})*/
+		...listModule.getters,
+		...blGetters
+	}
+
+	const blActions = {
+		[`${name}SetPage`]({ commit, state }, payload) {
+			const page = payload > 0 ? payload : 1
+			const callback = (collection) => {
+				commit(types[`${NAME}_SET_PAGE`], { page: payload, collection })
+			}
+			if(state.reverse){
+				db[name].orderBy(state.sort).reverse().offset((payload-1)*state.limit).limit(state.limit).toArray().then(callback)
+			}else{
+				db[name].orderBy(state.sort).offset((payload-1)*state.limit).limit(state.limit).toArray().then(callback)
+			}
+		}
 	}
 
 	// actions
 	const actions = {
-		[`${name}Select`]({ commit }, payload) {
+		/*[`${name}Select`]({ commit }, payload) {
 			commit(types[`${NAME}_SELECT`], payload)
 		},
 		[`${name}Load`]({ commit }){
@@ -90,26 +117,24 @@ export default (name, options, db, api) => {
 		},
 		[`${name}SetFilter`]({ commit }, payload){
 			commit(types[`${NAME}_SET_FILTER`], payload)
-		},
-		[`${name}toggleSelection`]({ commit }, payload) {
-			commit(types[`${NAME}_TOGGLE_SELECTION`], payload)
-		},
+		},*/
+		...listModule.actions,
+		...blActions
+	}
+
+	const blMutations = {
+
 	}
 
 	const mutations = {
+		[types[`${NAME}_SET_PAGE`]] (state, { page, collection }) {
+			state.collection = collection
+		},
+		/*
 		// SELECT 
 		[types[`${NAME}_SELECT`]] (state, entity) {
 			const index = state.collection.findIndex(e => e[_id] == entity[_id])
 			(index > -1) ? state.selected = index : state.selected = null
-		},
-		// TOGGLE SELECTION 
-		[types[`${NAME}_TOGGLE_SELECTION`]] (state, entity) {
-			const index = state.selection.indexOf(entity[_id]);
-			if (index > -1) {
-				state.selection = [ ...state.selection.slice(0, index), ...state.selection.slice(index+1) ]
-			}else{
-				state.selection.push(entiry[_id])
-			}
 		},
 		// LOAD
 		[types[`${NAME}_LOAD`]] (state) {
@@ -181,13 +206,15 @@ export default (name, options, db, api) => {
 		},
 		// SET SORT
 		[types[`${NAME}_SET_SORT`]](state, payload) {
-			state.sort = payload ? payload.sort : null
-			state.reverse = payload ? payload.reverse : false
+			state.sort = payload.sort
+			state.reverse = payload.reverse === 'desc' ? 'desc' : 'asc'
 		},
 		// SET FILTER
 		[types[`${NAME}_SET_FILTER`]](state, payload) {
 			state.filter = payload
-		},
+		},*/
+		...listModule.mutations,
+		...blMutations
 	}
 
 	return {

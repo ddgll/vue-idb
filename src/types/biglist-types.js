@@ -1,7 +1,12 @@
+import getListTypes from './list-defaults.js'
+
 export default (name) => {
-	const NAME = name.toUpperCase()
+	const listTypes = getListTypes(name)
+	const NAME = listTypes.NAME
 	return  {
-		[NAME + '_SELECT']: NAME + '_SELECT',
+		...listTypes,
+		
+		/*[NAME + '_SELECT']: NAME + '_SELECT',
 		[NAME + '_ADD']: NAME + '_ADD',
 		[NAME + '_ADD_SUCCESS']: NAME + '_ADD_SUCCESS',
 		[NAME + '_ADD_FAIL']: NAME + '_ADD_FAIL',
@@ -14,6 +19,8 @@ export default (name) => {
 		[NAME + '_LOAD']: NAME + '_LOAD',
 		[NAME + '_LOAD_SUCCESS']: NAME + '_LOAD_SUCCESS',
 		[NAME + '_LOAD_FAIL']: NAME + '_LOAD_FAIL',
-		[NAME + '_SET_LAST']: NAME + '_SET_LAST'
+		[NAME + '_SET_LAST']: NAME + '_SET_LAST',
+		[NAME + '_SET_SORT']: NAME + '_SET_SORT',
+		[NAME + '_SET_FILTER']: NAME + '_SET_FILTER'*/
 	}
 }

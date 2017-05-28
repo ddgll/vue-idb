@@ -32,15 +32,12 @@ const filterByObject = (filter) => {
 
 export default (array, filter) => {
 	const type = typeof filter
-	console.log('FILTER BY', filter, array, type)
+	//console.log('FILTER BY', filter, array, type)
 	if (!array) return array
 	switch(type) {
 		case 'boolean': return array.filter(filterByBoolean(filter))
 		case 'string': return isNumber(filter) ? array.filter(filterDefault(filter)) : array.filter(filterByString(filter))
 		case 'object': return array.filter(filterByObject(filter))
-		default: {
-			console.log('DEFAULT')
-			return array.filter(filterDefault(filter))
-		}
+		default: return array.filter(filterDefault(filter))
 	}
 }

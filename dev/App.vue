@@ -72,10 +72,10 @@ export default {
 		},
     setSort(type){
       switch(type){
-        case 'ta': this.$store.dispatch('testsSetSort', { sort: 'title', reverse: 'asc' }); break;
-        case 'td': this.$store.dispatch('testsSetSort', { sort: 'title', reverse: 'desc' }); break;
-        case 'ca': this.$store.dispatch('testsSetSort', { sort: 'created_at', reverse: 'asc' }); break;
-        case 'cd': this.$store.dispatch('testsSetSort', { sort: 'created_at', reverse: 'desc' }); break;
+        case 'ta': this.$store.dispatch('testsSetSort', { sort: 'title', reverse: false }); break;
+        case 'td': this.$store.dispatch('testsSetSort', { sort: 'title', reverse: true }); break;
+        case 'ca': this.$store.dispatch('testsSetSort', { sort: 'created_at', reverse: false }); break;
+        case 'cd': this.$store.dispatch('testsSetSort', { sort: 'created_at', reverse: true }); break;
         default: this.$store.dispatch('testsSetSort', null); break;
       }
     }

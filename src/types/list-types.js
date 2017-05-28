@@ -2,6 +2,7 @@ export default (name) => {
 	const NAME = name.toUpperCase()
 	return  {
 		[NAME + '_SELECT']: NAME + '_SELECT',
+		[NAME + '_TOGGLE_SELECTION']: NAME + '_TOGGLE_SELECTION',
 		[NAME + '_ADD']: NAME + '_ADD',
 		[NAME + '_ADD_SUCCESS']: NAME + '_ADD_SUCCESS',
 		[NAME + '_ADD_FAIL']: NAME + '_ADD_FAIL',
