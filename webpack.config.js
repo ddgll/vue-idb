@@ -48,7 +48,12 @@ module.exports = {
     historyApiFallback: true,
     noInfo: true
   },
-  devtool: '#eval-source-map'
+  plugins: [
+    new webpack.LoaderOptionsPlugin({
+      minimize: false
+    })
+  ],
+  devtool: '#source-map'
 }
 
 if (process.env.NODE_ENV === 'production') {

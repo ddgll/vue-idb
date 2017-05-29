@@ -1,15 +1,11 @@
 const getValue = (value) => typeof value === 'function' ? value() : value
-const filterDefault = (filter) => (value) => {
-	console.log('default', filter, value, filter === value)
-	!filter || filter == value
-}
+const filterDefault = (filter) => (value) => !filter || filter == value
 const isNumber = (value) => !isNaN(parseInt(value, 10)) && isFinite(value)
 const filterByString = (filter) => {
 	if (filter) filter = ('' + filter).toLowerCase()
 	return (value) => !filter || (value ? String(value).toLowerCase().indexOf(filter) !== -1 : false)
 }
 const filterByBoolean = (filter) => (value) => Boolean(value) === filter
-
 const filterByObject = (filter) => {
 	return (value) => {
 		let match, val, type
@@ -32,7 +28,6 @@ const filterByObject = (filter) => {
 
 export default (array, filter) => {
 	const type = typeof filter
-	//console.log('FILTER BY', filter, array, type)
 	if (!array) return array
 	switch(type) {
 		case 'boolean': return array.filter(filterByBoolean(filter))

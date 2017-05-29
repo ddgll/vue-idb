@@ -55,6 +55,7 @@ export default (name, options, db, api) => {
 			commit(types[`${NAME}_SELECT`], payload)
 		},
 		[`${name}Load`]({ commit }){
+			console.log('LOAD DATA')
 			commit(types[`${NAME}_LOAD`])
 			if(api && api.all){
 				api.all().then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))

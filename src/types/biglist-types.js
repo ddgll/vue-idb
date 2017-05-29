@@ -1,11 +1,22 @@
-import getListTypes from './list-defaults.js'
+import getListTypes from './list-types.js'
 
 export default (name) => {
 	const listTypes = getListTypes(name)
-	const NAME = listTypes.NAME
+	const NAME = name.toUpperCase()
+
+	const blTypes = {
+		[NAME + '_SET_PAGE']: NAME + '_SET_PAGE',
+		[NAME + '_SET_COUNT']: NAME + '_SET_COUNT',
+		[NAME + '_SET_LIMIT']: NAME + '_SET_LIMIT',
+		[NAME + '_SET_NB_PAGES']: NAME + '_SET_NB_PAGES',
+		[NAME + '_THINKING']: NAME + '_THINKING',
+		[NAME + '_SET_FILTERED']: NAME + '_SET_FILTERED',
+		[NAME + '_SET_INFINITE']: NAME + '_SET_INFINITE',
+	}
+
 	return  {
 		...listTypes,
-		
+		...blTypes
 		/*[NAME + '_SELECT']: NAME + '_SELECT',
 		[NAME + '_ADD']: NAME + '_ADD',
 		[NAME + '_ADD_SUCCESS']: NAME + '_ADD_SUCCESS',
