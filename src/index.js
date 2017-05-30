@@ -8,8 +8,14 @@ import dbOpen from './db-open'
 import defaultMutations from './mutations/defaults'
 import defaultHydrators from './hydrators/defaults'
 import getModules from './modules/defaults'
+import orderByFunc from './order-by'
+import filterByFunc from './filter-by'
+
+export const orderBy = orderByFunc
+export const filterBy = filterByFunc
 
 export { deepFreeze, arrayMax, uuid, jsUcfirst } from './contants'
+export * from './infinite-scroll'
 
 export default class VueIdb {
   static install

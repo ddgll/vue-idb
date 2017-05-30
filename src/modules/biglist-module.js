@@ -49,7 +49,7 @@ export default (name, options, db, api) => {
 		filtered: [],
 		infinite: [],
 		iStart: 0,
-		iLimit: 60,
+		iLimit: 100,
 		filtering: false
 	}
 
@@ -104,9 +104,8 @@ export default (name, options, db, api) => {
 			}
 		},
 		[`${name}SetInfinite`]({ commit, dispatch, state }, payload) {
-			const iStart = payload && payload.offset >= 0 ? payload.offset : 0
-			const iLimit = payload && payload.limit >= 60 ? payload.limit : 60
-			commit(types[`${NAME}_THINKING`], true)
+			const iStart = payload && payload.offset >= 0 ? payload.offset : state.iStart
+			const iLimit = payload && payload.limit >= 100 ? payload.limit : state.iLimit
 			if(isEmpty(state.filter)){
 				let query = db[name].orderBy(state.sort ? state.sort : _label)
 				if(state.reverse){
@@ -114,11 +113,9 @@ export default (name, options, db, api) => {
 				}
 				query.offset(iStart).limit(iLimit).toArray().then((collection) => {
 					commit(types[`${NAME}_SET_INFINITE`], { iStart, iLimit, collection })
-					commit(types[`${NAME}_THINKING`], false)
 				})
 			}else{
-				commit(types[`${NAME}_SET_INFINITE`], { page: payload, collection: _.slice(state.filtered, iStart, iStart + iLimit) })
-				commit(types[`${NAME}_THINKING`], false)
+				commit(types[`${NAME}_SET_INFINITE`], { iStart, iLimit, collection: _.slice(state.filtered, iStart, iStart + iLimit) })
 			}
 		},
 		[`${name}SetPage`]({ commit, dispatch, state }, payload) {
@@ -253,6 +250,7 @@ export default (name, options, db, api) => {
 	const blMutations = {
 		// INFINITE
 		[types[`${NAME}_SET_INFINITE`]] (state, { iStart, iLimit, collection }) {
+			console.log('SET INFINITE', iStart, iLimit, collection.length)
 			state.iStart = iStart
 			state.iLimit = iLimit
 			state.infinite = [ ...collection ]
