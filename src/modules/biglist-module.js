@@ -50,7 +50,7 @@ export default (name, options, db, api) => {
 		infinite: [],
 		iStart: 0,
 		iLimit: 100,
-		filtering: false
+		thinking: false
 	}
 
 	// getters
@@ -65,40 +65,43 @@ export default (name, options, db, api) => {
 		[`get${Name}Count`]: state => state.count,
 		[`get${Name}NbPages`]: state => state.nbPages,
 		[`get${Name}Limit`]: state => state.limit,
-		[`get${Name}Filtering`]: state => state.filtering
+		[`get${Name}Thinking`]: state => state.thinking
 	}
 
 	let filterTimer = null
 
 	const blActions = {
+		[`${name}LoadResponse`]({ commit, dispatch, state }, payload){
+			if(!payload || !payload.length) return commit(types[`${NAME}_LOAD_SUCCESS`])
+			const toAdd = payload.filter(entity => !entity[_deleted_at])
+			const toDelete = payload.filter(entity => entity[_deleted_at])
+			const callback = () => {
+				dispatch(`${name}SetCount`)
+				db[name].orderBy(_updated_at).reverse().limit(1).toArray().then((last) => {
+					if(last && last.length){
+						commit(types[`${NAME}_SET_LAST`], last[0][_updated_at])	
+					}
+					commit(types[`${NAME}_LOAD_SUCCESS`])
+					if(isEmpty(state.filter)){
+						dispatch(`${name}SetPage`, state.page)
+					}else{
+						dispatch(`${name}SetFiltered`)
+					}
+				})
+			}
+			return db[name].bulkPut(toAdd).then(() => {
+				if(toDelete.length){
+					return db[name].bulkDelete(toDelete.map(entity => entity[_id])).then(callback)
+				}else{
+					callback()
+				}
+			})
+		},
 		[`${name}Load`]({ commit, dispatch, state }){
 			commit(types[`${NAME}_LOAD`])
 			if(api && api.all){
-				api.all(state.last).then(
-					res => {
-						if(!res.data || !res.data.length) {
-							return commit(types[`${NAME}_LOAD_SUCCESS`])
-						}
-						const toAdd = res.data.filter(entity => !entity[_deleted_at])
-						const toDelete = res.data.filter(entity => entity[_deleted_at])
-						const callback = () => {
-							dispatch(`${name}SetCount`)
-							db[name].orderBy(_updated_at).reverse().limit(1).toArray().then((last) => {
-								if(last && last.length){
-									commit(types[`${NAME}_SET_LAST`], last[0][_updated_at])	
-								}
-								commit(types[`${NAME}_LOAD_SUCCESS`])
-								dispatch(`${name}SetPage`, state.page)
-							})
-						}
-						db[name].bulkPut(toAdd).then(() => {
-							if(toDelete.length){
-								db[name].bulkDelete(toDelete.map(entity => entity[_id])).then(callback)
-							}else{
-								callback()
-							}
-						})
-					},
+				return api.all(state.last).then(
+					res => dispatch(`${name}LoadResponse`, res.data),
 					err => commit(types[`${NAME}_LOAD_FAIL`], err)
 				)
 			}
@@ -196,6 +199,7 @@ export default (name, options, db, api) => {
 					commit(types[`${NAME}_SET_FILTERED`], filtered)
 					dispatch(`${name}SetCount`)
 					dispatch(`${name}SetPage`, state.page)
+					dispatch(`${name}SetInfinite`)
 				})
 			})
 		}
@@ -276,7 +280,7 @@ export default (name, options, db, api) => {
 			state.loading = false
 		},
 		[types[`${NAME}_THINKING`]] (state, payload) {
-			state.filtering = payload
+			state.thinking = payload
 		},
 		[types[`${NAME}_SET_FILTERED`]] (state, payload) {
 			state.filtered = payload

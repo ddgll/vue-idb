@@ -2,10 +2,12 @@
   <div id="app">
     <h1>vue-idb</h1>
     <br>HYDRATED: {{ hydrated }}<br>
-    <router-link to="/">List</router-link>
-    <router-link to="/big">BigList</router-link>
-    <router-link to="/without-vuex">Without Vuex</router-link>
-    <router-view></router-view>
+    <div v-if="hydrated">
+      <router-link to="/">List</router-link>
+      <router-link to="/big">BigList</router-link>
+      <router-link to="/without-vuex">Without Vuex</router-link>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 

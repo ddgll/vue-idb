@@ -3,9 +3,17 @@ import Vuex from 'vuex'
 
 import VueIdb from './idb'
 
+import axios from 'axios'
+
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
+
+let modules = VueIdb.modules
+
+modules.bigs.actions.bigsLoad = ({ commit, dispatch, state }, payload) => {
+  return axios.get('/dev/data/' + payload).then((res) => dispatch('bigsLoadResponse', res.data))
+}
 
 export default new Vuex.Store({
   state: {
@@ -14,8 +22,9 @@ export default new Vuex.Store({
   actions: {
   },
   mutations: {
+    'DELETE_INDEXED_DB'(){}
   },
-  modules: VueIdb.modules,
+  modules: modules,
   getters: {
     hydrated: state => state.hydrated
   },

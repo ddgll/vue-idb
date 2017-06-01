@@ -47,10 +47,10 @@ function filterBy(array, filter){
 addEventListener("message", function (evt) {
 	var result;
 	try{
-		console.log('WW DATA', evt.data);
+		const debut = new Date().getTime()
 		result = filterBy(evt.data.array, evt.data.filter);
+		console.log('TEMPS DE FILTRAGE', new Date().getTime() - debut + ' milli')
 		if(result){
-			console.log('IN WW', result);
 			postMessage(result);
 		}
 	}catch(e){

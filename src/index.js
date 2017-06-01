@@ -10,9 +10,11 @@ import defaultHydrators from './hydrators/defaults'
 import getModules from './modules/defaults'
 import orderByFunc from './order-by'
 import filterByFunc from './filter-by'
+import filterByPromisedFunc from './filter-by-promised'
 
 export const orderBy = orderByFunc
 export const filterBy = filterByFunc
+export const filterByThread = filterByPromisedFunc
 
 export { deepFreeze, arrayMax, uuid, jsUcfirst } from './contants'
 export * from './infinite-scroll'

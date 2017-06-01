@@ -3,7 +3,7 @@
 		<h2>List without vuex</h2>
 		<input @keyup.enter="add($event.target.value); $event.target.value = '';" placeholder="Write and press enter">
 		<hr>
-		<div style="float: right">
+		<div>
 			<ul>
 				<li class="title">LOADED FROM iDB</li>
 				<li class="search">
@@ -18,12 +18,12 @@
 						<option value="cd">Création DESC</option>
 					</select>
 				</li>
-				<li>
+				<!--li>
 					<select v-model="selected">
 						<option>-Select-</option>
 						<option v-for="item in ordered()" :value="item.id">{{ item.title }}</option>
 					</select>
-				</li>
+				</li-->
 				<li v-for="test in tests" :class="{'selected': selected === test.id}">
 					{{ test.title }} <button type="button" @click="remove(test)" class="remove">&times;</button>
 				</li>
@@ -53,22 +53,21 @@ export default {
 		update(){
 			let query = this.$db.tests
 			if(this.sort){
-				query.orderBy(this.sort)
+				query = query.orderBy(this.sort)
 				if(this.reverse){
-					query.reverse()
+					query = query.reverse()
 				}
 			}
 			if(this.filter){
-				query.where('label').startsWithIgnoreCase(this.filter)
+				const lf = String(this.filter).toLowerCase()
+				query = query.filter((test) => String(test.title).toLowerCase().indexOf(lf) > -1)
 			}
-			console.log('UPDATE', query)
-			query.toArray().then(tests => this.tests = tests, err => console.error(err))
+			query.toArray().then(tests => this.tests = tests)
 		},
 		ordered(){
 			return orderBy(this.tests, 'title')
 		},
 		add (value){
-			console.log('ADD', value)
 			this.$db.tests.add({ 
 				id: uuid(), 
 				title: value, 

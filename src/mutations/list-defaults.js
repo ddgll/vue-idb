@@ -14,6 +14,9 @@ export default (name, options, db) => {
     [NAME + '_UPDATE']: update,
 		[NAME + '_UPDATE_FAIL']: update,
     [NAME + '_UPDATE_SUCCESS']: update,
+    [NAME + '_UPDATES']: update,
+		[NAME + '_UPDATES_FAIL']: update,
+    [NAME + '_UPDATES_SUCCESS']: update,
     [NAME + '_REMOVE'](payload){
       db[name].where(id).equals(payload[id]).delete()
     },

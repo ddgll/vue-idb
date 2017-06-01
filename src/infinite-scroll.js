@@ -91,6 +91,7 @@ export class InfiniteList {
 			//this._scrollTop = (this._el.scrollTop - diff + this._height)
 			//this._el.scrollTop = (this._el.scrollTop - diff + this._height)
 			this._start += 50
+			console.log('infinite 3')
 			this._store.dispatch(this._setInfinite, { offset: this._start, limit: this._limit })
 		}
 	}
@@ -109,6 +110,7 @@ export class InfiniteList {
 			//this._scrollTop = (this._el.scrollTop + diff + this._height)
 			//this._el.scrollTop = (this._el.scrollTop + diff + this._height)
 			this._start -= 50
+			console.log('infinite 4')
 			this._store.dispatch(this._setInfinite, { offset: this._start, limit: this._limit })
 		}
 	}
