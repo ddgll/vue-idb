@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const deepFreeze = (obj) => {
   var propNames = Object.getOwnPropertyNames(obj);
   propNames.forEach(function(name) {
@@ -29,6 +31,16 @@ export const uuid = () => {
 }
 
 export const jsUcfirst = (string) => string.charAt(0).toUpperCase() + string.slice(1)
+
+
+export const isEmpty = (value) => {
+	if (_.isObject(value)) {
+		return !_.some( value, function(value, key) {
+			return value !== undefined && String(value).length;
+		});
+	} 
+	return _.isEmpty(value);
+}
 
 export class VIDB { }
 

@@ -1,20 +1,10 @@
 import getTypes from '../types/biglist-types'
 import getListModule from './list-module'
-import { arrayMax, jsUcfirst } from '../contants'
+import { arrayMax, jsUcfirst, isEmpty } from '../contants'
 import filterBy from '../filter-by'
 import filterByPromised from '../filter-by-promised'
 import orderBy from '../order-by'
 import _ from 'lodash'
-
-
-const isEmpty = (value) => {
-	if (_.isObject(value)) {
-		return !_.some( value, function(value, key) {
-			return value !== undefined && String(value).length;
-		});
-	} 
-	return _.isEmpty(value);
-}
 
 export default (name, options, db, api) => {
 	const listModule = getListModule(name, options, db, api)
@@ -30,14 +20,6 @@ export default (name, options, db, api) => {
 	const _deleted_at = options.deleted_at ? options.deleted_at : 'deleted_at'
 
 	const state = {
-		/*collection: [],
-		loading: false,
-		loaded: false,
-		selected: null,
-		filter: {},
-		sort: null,
-		reverse: false,
-		last: null*/
 		...listModule.state,
 		mode: 'page',
 		page: 1,		
@@ -59,6 +41,10 @@ export default (name, options, db, api) => {
 		[`is${Name}Loaded`]: state => state.loaded,
 		[`get${Name}Last`]: state => state.last,
 		[`get${Name}Selected`]: state => state.selected !== null ? state.collection[state.selected] : null,
+		[`get${Name}Selection`]: state => state.selection,
+		[`get${Name}SelectionCollection`]: state => state.collection.filter(entity => state.selection.indexOf(entity[_id]) > -1),
+		[`get${Name}SelectionCount`]: state => state.selection.length,
+		[`is${Name}InSelection`]: state => id => (state.selection.indexOf(id) > -1) ? true : false,
 		[`get${Name}`]: state => state.collection,
 		[`get${Name}Infinite`]: state => state.infinite,
 		[`get${Name}Page`]: state => state.page,
@@ -207,46 +193,6 @@ export default (name, options, db, api) => {
 
 	// actions
 	const actions = {
-		/*[`${name}Select`]({ commit }, payload) {
-			commit(types[`${NAME}_SELECT`], payload)
-		},
-		[`${name}Load`]({ commit }){
-			commit(types[`${NAME}_LOAD`])
-			if(api && api.all){
-				api.all().then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
-			}
-		},
-		[`${name}Changes`]({ commit, state }){
-			commit(types[`${NAME}_LOAD`])
-			if(api && api.changes){
-				api.changes(state.last).then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
-			}
-		},
-		[`${name}Add`]({ commit }, payload){
-			commit(types[`${NAME}_ADD`], payload)
-			if(api && api.add){
-				api.add(payload).then(res => commit(types[`${NAME}_ADD_SUCCESS`], res.data), err => commit(types[`${NAME}_ADD_FAIL`], res.data))
-			}
-		},
-		[`${name}Update`]({ commit }, payload){
-			commit(types[`${NAME}_UPDATE`], payload)
-			if(api && api.update){
-				api.update(payload).then(res => commit(types[`${NAME}_UPDATE_SUCCESS`], res.data), err => commit(types[`${NAME}_UPDATE_FAIL`], res.data))
-			}
-		},
-		[`${name}Remove`]({ commit }, payload){
-			commit(types[`${NAME}_REMOVE`], payload)
-			if(api && api.remove){
-				api.remove(payload).then(res => commit(types[`${NAME}_REMOVE_SUCCESS`], res.data), err => commit(types[`${NAME}_REMOVE_FAIL`], payload))
-			}
-		},
-		[`${name}SetSort`]({ commit }, payload){
-			console.log('SET SOTR', payload)
-			commit(types[`${NAME}_SET_SORT`], payload)
-		},
-		[`${name}SetFilter`]({ commit }, payload){
-			commit(types[`${NAME}_SET_FILTER`], payload)
-		},*/
 		...listModule.actions,
 		...blActions
 	}
@@ -288,89 +234,6 @@ export default (name, options, db, api) => {
 	}
 
 	const mutations = {
-		/*
-		// SELECT 
-		[types[`${NAME}_SELECT`]] (state, entity) {
-			const index = state.collection.findIndex(e => e[_id] == entity[_id])
-			(index > -1) ? state.selected = index : state.selected = null
-		},
-		// LOAD
-		[types[`${NAME}_LOAD`]] (state) {
-			state.loading = true
-		},
-		[types[`${NAME}_LOAD_SUCCESS`]] (state, collection) {
-			state.loading = false
-			state.collection = collection
-			const dates = state.collection.map(entity => entity[_updated_at])
-			state.last = arrayMax(dates)
-		},
-		[types[`${NAME}_LOAD_FAIL`]] (state) {
-			state.loading = false
-			state.loaded = false
-			state.collection = []
-		},
-		// ADD 
-		[types[`${NAME}_ADD`]] (state, entity) {
-			state.collection = [ ...state.collection, entity ]
-		},
-		[types[`${NAME}_ADD_SUCCESS`]] (state, entity) {
-			state.loading = false
-			const index = state.collection.findIndex(e => e[_id] === entity[_id])
-			if(index > -1){
-				state.collection = [ ...state.collection.slice(0, index), entity, ...state.collection.slice(index+1) ]
-				if(entity[_updated_at] > state.last) state.last = entity[_updated_at]
-			}
-		},
-		[types[`${NAME}_ADD_FAIL`]] (state, entity) {
-			state.loading = false
-			const index = state.collection.findIndex(e => e[_id] == entity[_id])
-			if(index > -1){
-				state.collection = [ ...state.collection.slice(0, index), ...state.collection.slice(index+1) ]
-			}
-		},
-		// REMOVE
-		[types[`${NAME}_REMOVE`]](state, entity) {
-			state.collection = state.collection.filter(e => e[_id] !== entity[_id])
-		},
-		[types[`${NAME}_REMOVE_FAIL`]](state, entity) {
-			state.collection = [ ...state.collection, entity ]
-		},
-		// UPDATE
-		[types[`${NAME}_UPDATE`]] (state, entity) {
-			const index = state.collection.findIndex(e => e[_id] == entity[_id])
-			if(index > -1){
-				state.collection = [ ...state.collection.slice(0, index), entity , ...state.collection.slice(index+1) ]
-			}
-			state.loading = true
-		},
-		[types[`${NAME}_UPDATE_SUCCESS`]] (state, entity) {
-			state.loading = false
-			const index = state.collection.findIndex(e => e[_id] == entity[_id])
-			if(index > -1){
-				state.collection = [ ...state.collection.slice(0, index), entity, ...state.collection.slice(index+1) ]
-				if(entity[_updated_at] > state.last) state.last = entity[_updated_at]
-			}
-		},
-		[types[`${NAME}_UPDATE_FAIL`]] (state, entity) {
-			state.loading = false
-			const index = state.collection.findIndex(e => e[_id] == entity[_id])
-			if(index > -1){
-				state.collection = [ ...state.collection.slice(0, index), entity, ...state.collection.slice(index+1) ]
-			}
-		},
-		// LAST
-		[types[`${NAME}_SET_LAST`]](state, payload) {
-			state.last = payload
-		},
-		// SET SORT
-		[types[`${NAME}_SET_SORT`]](state, payload) {
-			state.sort = payload.sort
-			state.reverse = payload.reverse === 'desc' ? 'desc' : 'asc'
-		},
-		// SET FILTER
-		[types[`${NAME}_SET_FILTER`]](state, payload) {
-			state.filter = payload
-		},*/
 		...listModule.mutations,
 		...blMutations
 	}

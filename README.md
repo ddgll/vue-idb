@@ -5,7 +5,7 @@ IndexedDB wrapper for Vuejs based on Dexie
 ## Install
 
   ``` bash
-  npm install git+ssh://git@github.com:ddgll/vue-idb.git --save
+  npm install vue-idb --save
   ```
 ## Usage
 
