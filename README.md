@@ -1,4 +1,4 @@
-# js-vue.library.vue-idb
+# vue-idb
 
 IndexedDB wrapper for Vuejs based on Dexie
 
