@@ -58,6 +58,7 @@
     "style-loader": "^0.18.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
+    "uglifyjs-webpack-plugin": "^0.4.3",
     "vue-loader": "^12.1.0",
     "vue-router": "^2.5.3",
     "vue-style-loader": "^3.0.1",

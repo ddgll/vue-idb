@@ -58,13 +58,7 @@ export default (name, options, db, api) => {
 			console.log('LOAD DATA')
 			commit(types[`${NAME}_LOAD`])
 			if(api && api.all){
-				api.all().then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
-			}
-		},
-		[`${name}Changes`]({ commit, state }){
-			commit(types[`${NAME}_LOAD`])
-			if(api && api.changes){
-				api.changes(state.last).then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
+				api.all(state.last).then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
 			}
 		},
 		[`${name}Add`]({ commit }, payload){
@@ -92,7 +86,7 @@ export default (name, options, db, api) => {
 		[`${name}SetFilter`]({ commit }, payload){
 			commit(types[`${NAME}_SET_FILTER`], payload)
 		},
-		[`${name}toggleSelection`]({ commit }, payload) {
+		[`${name}ToggleSelection`]({ commit }, payload) {
 			commit(types[`${NAME}_TOGGLE_SELECTION`], payload)
 		},
 	}
