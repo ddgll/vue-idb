@@ -24,8 +24,8 @@ export class InfiniteList {
 		this._init()
 		this._reset()
 		this._watcherList = this._store.watch(state => state[name].infinite, list => this._init())
-		this._watcherFilter = this._store.watch(state => state[name].filtering, filtering => {
-			if(!filtering) this._reset()
+		this._watcherFilter = this._store.watch(state => state[name].thinking, thinking => {
+			if(!thinking) this._reset()
 		})
 	}
 
@@ -88,10 +88,7 @@ export class InfiniteList {
 			}
 			this._paddingTop += diff
 			this._setFaker()
-			//this._scrollTop = (this._el.scrollTop - diff + this._height)
-			//this._el.scrollTop = (this._el.scrollTop - diff + this._height)
 			this._start += 50
-			console.log('infinite 3')
 			this._store.dispatch(this._setInfinite, { offset: this._start, limit: this._limit })
 		}
 	}
@@ -107,10 +104,7 @@ export class InfiniteList {
 			}
 			this._paddingTop -= diff
 			this._setFaker()
-			//this._scrollTop = (this._el.scrollTop + diff + this._height)
-			//this._el.scrollTop = (this._el.scrollTop + diff + this._height)
 			this._start -= 50
-			console.log('infinite 4')
 			this._store.dispatch(this._setInfinite, { offset: this._start, limit: this._limit })
 		}
 	}
