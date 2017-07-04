@@ -40,7 +40,7 @@ export default (name, options, db, api) => {
 		[`is${Name}Loading`]: state => state.loading,
 		[`is${Name}Loaded`]: state => state.loaded,
 		[`get${Name}Last`]: state => state.last,
-		[`get${Name}Selected`]: state => state.selected !== null ? state.collection[state.selected] : null,
+		[`get${Name}Selected`]: state => state.selected !== null ? state.selected : null,
 		[`get${Name}Selection`]: state => state.selection,
 		[`get${Name}SelectionCollection`]: state => state.collection.filter(entity => state.selection.indexOf(entity[_id]) > -1),
 		[`get${Name}SelectionCount`]: state => state.selection.length,
@@ -57,6 +57,11 @@ export default (name, options, db, api) => {
 	let filterTimer = null
 
 	const blActions = {
+		[`${name}Select`]({ commit }, payload) {
+			db[name].where(_id).equals(payload.id).first().then((entity) => {
+				commit(types[`${NAME}_SELECT`], entity)
+			})
+		},
 		[`${name}LoadResponse`]({ commit, dispatch, state }, payload){
 			if(!payload || !payload.length) return commit(types[`${NAME}_LOAD_SUCCESS`])
 			const toAdd = payload.filter(entity => !entity[_deleted_at])
@@ -198,6 +203,10 @@ export default (name, options, db, api) => {
 	}
 
 	const blMutations = {
+		// SELECT 
+		[types[`${NAME}_SELECT`]] (state, entity) {
+			state.selected = { ...entity }
+		},
 		// INFINITE
 		[types[`${NAME}_SET_INFINITE`]] (state, { iStart, iLimit, collection }) {
 			console.log('SET INFINITE', iStart, iLimit, collection.length)

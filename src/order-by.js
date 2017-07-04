@@ -11,7 +11,7 @@ const compare = (a, b, reverse) =>{
 }
 export default (array, args, reverse) => {
   let fields, field, revs = {}, ordered = array ? [...array] : []
-	console.log('SORT', args, reverse)
+	// console.log('SORT', args, reverse)
 	if(!args) return ordered
   if(typeof args !== 'string'){
     ordered.sort((a, b) => {
