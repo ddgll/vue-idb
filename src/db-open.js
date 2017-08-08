@@ -1,8 +1,8 @@
 
-export default (db, schemas) => {
+export default (db, schemas, version) => {
 	for(let schema of schemas){
 		console.log('Create DB schema')
-		db.version(1).stores(schema)
+		db.version(version ? version : 1).stores(schema)
 	}
 
 	if(!db.isOpen()){
