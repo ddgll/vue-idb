@@ -37,7 +37,7 @@ export default class VueIdb {
       console.error('VueIdb configuration error: schemas must be set')
     }
     VueIdb._db = new Dexie(options.database ? options.database : 'database')
-    dbOpen(VueIdb._db, options.schemas)
+    dbOpen(VueIdb._db, options.schemas, options.version ? options.version : 1)
   }
 
   get plugin () {

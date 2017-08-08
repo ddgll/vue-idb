@@ -6,6 +6,7 @@ Vue.use(VueIdb)
 import axios from 'axios'
 
 export default new VueIdb({
+  version: 1,
   database: 'bigtest',
   schemas: [
     { tests: 'id, title, created_at, updated_at' },
