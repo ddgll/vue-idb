@@ -12,8 +12,8 @@
 						<option v-for="item in selection" :value="item.value">{{ item.label }}</option>
 					</select>
 				</li>
-				<li v-for="test in tests" :class="{'selected': selected === test.id}">
-					{{ test.title }} <button type="button" @click="remove(test)" class="remove">&times;</button>
+				<li v-for="test in tests" :class="{'selected': selected === test.id}" @click="testsSelect">
+					{{ test.title }} <button type="button" @click.stop.prevent="remove(test)" class="remove">&times;</button>
 				</li>
 			</ul>
 		</div>
@@ -32,8 +32,8 @@
 						<option value="cd">Création DESC</option>
 					</select>
 				</li>
-				<li v-for="test in testsStore">
-					{{ test.title }} <button type="button" @click="remove(test)" class="remove">&times;</button>
+				<li v-for="test in testsStore" @click="testsToggleSelection">
+					{{ test.title }} <button type="button" @click.stop.prevent="remove(test)" class="remove">&times;</button>
 				</li>
 			</ul>
 		</div>
@@ -60,6 +60,7 @@ export default {
 		this.$db.tests.toArray().then( tests => this.tests = tests )
 	},
 	methods: {
+		...mapActions(['testsSelect', 'testsToggleSelection']),
 		add (value){
 			console.log('ADD', value)
 			this.$store.dispatch('testsAdd', { id: uuid(), title: value, created_at: new Date(), updated_at: new Date() } )

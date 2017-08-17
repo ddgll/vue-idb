@@ -51,9 +51,8 @@ export default (name, options, db, api) => {
 
 	// actions
 	const actions = {
-		[`${name}Select`]({ commit }, payload) {
-			const index = state.collection.findIndex(e => e[_id] == entity[_id])
-			commit(types[`${NAME}_SELECT`], index)
+		[`${name}Select`]({ commit, state }, payload) {
+			commit(types[`${NAME}_SELECT`], payload)
 		},
 		[`${name}Load`]({ commit }){
 			console.log('LOAD DATA')
@@ -93,10 +92,6 @@ export default (name, options, db, api) => {
 	}
 
 	const mutations = {
-		// SELECT 
-		[types[`${NAME}_SELECT`]] (state, index) {
-			(index > -1) ? state.selected = index : state.selected = null
-		},
 		// TOGGLE SELECTION 
 		[types[`${NAME}_TOGGLE_SELECTION`]] (state, entity) {
 			const index = state.selection.indexOf(entity[_id]);
@@ -105,6 +100,12 @@ export default (name, options, db, api) => {
 			}else{
 				state.selection.push(entity[_id])
 			}
+		},
+		// SELECT 
+		[types[`${NAME}_SELECT`]] (state, entity) {
+			const ids = state.collection.map(e => e[_id])
+			const index = ids.indexOf(entity[_id])
+			(index > -1) ? state.selected = index : state.selected = null
 		},
 		// LOAD
 		[types[`${NAME}_LOAD`]] (state) {
