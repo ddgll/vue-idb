@@ -51,7 +51,7 @@ export default (name, options, db, api) => {
 
 	// actions
 	const actions = {
-		[`${name}Select`]({ commit }, payload) {
+		[`${name}Select`]({ commit, state }, payload) {
 			const index = state.collection.findIndex(e => e[_id] === payload[_id])
 			commit(types[`${NAME}_SELECT`], index)
 		},
