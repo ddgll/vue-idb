@@ -31,6 +31,10 @@ IndexedDB wrapper for Vuejs based on Dexie
   })
   ```
   
+# 0.1.4 Enhancement
+  BUGFIX on listSelect vuex action
+  BUGFIX on toggleSelect vuex action
+  
 # 0.1.3 Enhancement
   Add Dexie DB version in options
 
