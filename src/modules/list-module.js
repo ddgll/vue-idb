@@ -55,11 +55,12 @@ export default (name, options, db, api) => {
 			const index = state.collection.findIndex(e => e[_id] === payload[_id])
 			commit(types[`${NAME}_SELECT`], index)
 		},
-		[`${name}Load`]({ commit }){
+		[`${name}Load`]({ commit }, payload){
 			console.log('LOAD DATA')
+			const params = { ...payload, last: state.last }
 			commit(types[`${NAME}_LOAD`])
 			if(api && api.all){
-				return api.all(state.last).then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
+				return api.all(params).then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
 			} else {
 				return Promise.resolve()
 			}
