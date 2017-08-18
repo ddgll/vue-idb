@@ -1,5 +1,5 @@
 import getTypes from '../types/list-types'
-import { arrayMax, jsUcfirst } from '../contants'
+import { arrayMax, jsUcfirst, uuid } from '../contants'
 import filterBy from '../filter-by'
 import orderBy from '../order-by'
 
@@ -55,33 +55,67 @@ export default (name, options, db, api) => {
 			const index = state.collection.findIndex(e => e[_id] === payload[_id])
 			commit(types[`${NAME}_SELECT`], index)
 		},
-		[`${name}Load`]({ commit }){
+		[`${name}Load`]({ commit }, payload){
 			console.log('LOAD DATA')
+			const params = { ...payload, last: state.last }
 			commit(types[`${NAME}_LOAD`])
 			if(api && api.all){
-				api.all(state.last).then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
+				return api.all(params).then(res => commit(types[`${NAME}_LOAD_SUCCESS`], res.data), err => commit(types[`${NAME}_LOAD_FAIL`], res.data))
+			} else {
+				return Promise.resolve()
 			}
 		},
 		[`${name}Add`]({ commit }, payload){
-			commit(types[`${NAME}_ADD`], payload)
+			let entity = { ...payload }
+			if (!payload[_id]) {
+				entity[_id] = uuid()
+			}
+			commit(types[`${NAME}_ADD`], entity)
 			if(api && api.add){
-				api.add(payload).then(res => commit(types[`${NAME}_ADD_SUCCESS`], res.data), err => commit(types[`${NAME}_ADD_FAIL`], res.data))
+				return api.add(payload).then(res => {
+					commit(types[`${NAME}_REMOVE`], entity)
+					commit(types[`${NAME}_ADD`], res.data)
+					commit(types[`${NAME}_SET_LOADING`], false)
+					return res.data
+				}, err => {
+					commit(types[`${NAME}_ADD_FAIL`], entity)
+					return err
+				})
+			} else {
+				return Promise.resolve()
 			}
 		},
 		[`${name}Update`]({ commit }, payload){
 			commit(types[`${NAME}_UPDATE`], payload)
 			if(api && api.update){
-				api.update(payload).then(res => commit(types[`${NAME}_UPDATE_SUCCESS`], res.data), err => commit(types[`${NAME}_UPDATE_FAIL`], res.data))
+				return api.update(payload).then(res => {
+					commit(types[`${NAME}_UPDATE_SUCCESS`], res.data)
+					return res.data
+				}, err => {
+					commit(types[`${NAME}_UPDATE_FAIL`], res.data)
+					return err
+				})
+			} else {
+				return Promise.resolve()
 			}
 		},
 		[`${name}Remove`]({ commit }, payload){
 			commit(types[`${NAME}_REMOVE`], payload)
 			if(api && api.remove){
-				api.remove(payload).then(res => commit(types[`${NAME}_REMOVE_SUCCESS`], res.data), err => commit(types[`${NAME}_REMOVE_FAIL`], payload))
+				return api.remove(payload).then(res => {
+					commit(types[`${NAME}_SET_LOADING`], false)
+					return res.data
+				}, err => {
+					commit(types[`${NAME}_ADD`], payload)
+					commit(types[`${NAME}_SET_LOADING`], false)
+					return err
+				})
+			} else {
+				return Promise.resolve()
 			}
 		},
 		[`${name}SetSort`]({ commit }, payload){
-			console.log('SET SOTR', payload)
+			console.log('SET SORT', payload)
 			commit(types[`${NAME}_SET_SORT`], payload)
 		},
 		[`${name}SetFilter`]({ commit }, payload){
@@ -125,9 +159,9 @@ export default (name, options, db, api) => {
 		[types[`${NAME}_ADD`]] (state, entity) {
 			state.collection = [ ...state.collection, entity ]
 		},
-		[types[`${NAME}_ADD_SUCCESS`]] (state, entity) {
+		[types[`${NAME}_ADD_SUCCESS`]] (state, { entity, vidbuuid }) {
 			state.loading = false
-			const index = state.collection.findIndex(e => e[_id] === entity[_id])
+			const index = state.collection.findIndex(e => e.vidbuuid === vidbuuid)
 			if(index > -1){
 				state.collection = [ ...state.collection.slice(0, index), entity, ...state.collection.slice(index+1) ]
 				if(entity[_updated_at] > state.last) state.last = entity[_updated_at]
@@ -146,6 +180,8 @@ export default (name, options, db, api) => {
 		},
 		[types[`${NAME}_REMOVE_FAIL`]](state, entity) {
 			state.collection = [ ...state.collection, entity ]
+		},
+		[types[`${NAME}_REMOVE_SUCCESS`]](state, entity) {
 		},
 		// UPDATE
 		[types[`${NAME}_UPDATE`]] (state, entity) {
@@ -182,6 +218,10 @@ export default (name, options, db, api) => {
 		// SET FILTER
 		[types[`${NAME}_SET_FILTER`]](state, payload) {
 			state.filter = payload
+		},
+		// SET LOADING
+		[types[`${NAME}_SET_LOADING`]](state, payload) {
+			state.loading = payload
 		},
 	}
 
