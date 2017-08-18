@@ -42,10 +42,10 @@ export default (name, options, db, api) => {
 		[`get${Name}Count`]: state => (field, value) => field ? state.collection.filter(entity => entity[field] === value).length : state.collection.length,
 		[`get${Name}Ids`]: state => (field, value) => field ?  state.collection.filter(entity => entity[field] === value).map(entity => entity[_id]) : state.collection.map(entity => entity[_id]),
 		[`get${Name}Selectable`]: state => orderBy(state.collection.map(entity => { 
-			return {
-				label: entity[_label], 
-				value: entity[_id] 
-			}
+			let r = { ...entity }
+			if (!entity.label) r.label = entity[_label]
+			if (!entity.value) r.value = entity[_id]
+			return r
 		}), 'label', false)
 	}
 
