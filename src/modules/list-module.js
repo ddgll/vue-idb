@@ -65,13 +65,21 @@ export default (name, options, db, api) => {
 			}
 		},
 		[`${name}Add`]({ commit }, payload){
-			const entity = { ...payload, id: uuid() }
+			let entity = { ...payload }
+			if (!payload[_id]) {
+				entity[_id] = uuid()
+			}
 			commit(types[`${NAME}_ADD`], entity)
 			if(api && api.add){
 				return api.add(payload).then(res => {
 					commit(types[`${NAME}_REMOVE`], entity)
 					commit(types[`${NAME}_ADD`], res.data)
-				}, err => commit(types[`${NAME}_ADD_FAIL`], entity))
+					commit(types[`${NAME}_SET_LOADING`], false)
+					return res.data
+				}, err => {
+					commit(types[`${NAME}_ADD_FAIL`], entity)
+					return err
+				})
 			} else {
 				return Promise.resolve()
 			}
@@ -79,7 +87,13 @@ export default (name, options, db, api) => {
 		[`${name}Update`]({ commit }, payload){
 			commit(types[`${NAME}_UPDATE`], payload)
 			if(api && api.update){
-				return api.update(payload).then(res => commit(types[`${NAME}_UPDATE_SUCCESS`], res.data), err => commit(types[`${NAME}_UPDATE_FAIL`], res.data))
+				return api.update(payload).then(res => {
+					commit(types[`${NAME}_UPDATE_SUCCESS`], res.data)
+					return res.data
+				}, err => {
+					commit(types[`${NAME}_UPDATE_FAIL`], res.data)
+					return err
+				})
 			} else {
 				return Promise.resolve()
 			}
@@ -87,13 +101,20 @@ export default (name, options, db, api) => {
 		[`${name}Remove`]({ commit }, payload){
 			commit(types[`${NAME}_REMOVE`], payload)
 			if(api && api.remove){
-				return api.remove(payload).then(res => {}, err => commit(types[`${NAME}_ADD`], payload))
+				return api.remove(payload).then(res => {
+					commit(types[`${NAME}_SET_LOADING`], false)
+					return res.data
+				}, err => {
+					commit(types[`${NAME}_ADD`], payload)
+					commit(types[`${NAME}_SET_LOADING`], false)
+					return err
+				})
 			} else {
 				return Promise.resolve()
 			}
 		},
 		[`${name}SetSort`]({ commit }, payload){
-			console.log('SET SOTR', payload)
+			console.log('SET SORT', payload)
 			commit(types[`${NAME}_SET_SORT`], payload)
 		},
 		[`${name}SetFilter`]({ commit }, payload){
@@ -196,6 +217,10 @@ export default (name, options, db, api) => {
 		// SET FILTER
 		[types[`${NAME}_SET_FILTER`]](state, payload) {
 			state.filter = payload
+		},
+		// SET LOADING
+		[types[`${NAME}_SET_LOADING`]](state, payload) {
+			state.loading = payload
 		},
 	}
 

@@ -17,6 +17,7 @@ export default (name) => {
 		[NAME + '_LOAD_FAIL']: NAME + '_LOAD_FAIL',
 		[NAME + '_SET_LAST']: NAME + '_SET_LAST',
 		[NAME + '_SET_SORT']: NAME + '_SET_SORT',
-		[NAME + '_SET_FILTER']: NAME + '_SET_FILTER'
+		[NAME + '_SET_FILTER']: NAME + '_SET_FILTER',
+		[NAME + '_SET_LOADING']: NAME + '_SET_LOADING'
 	}
 }
