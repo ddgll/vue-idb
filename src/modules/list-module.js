@@ -176,7 +176,10 @@ export default (name, options, db, api) => {
 		},
 		// REMOVE
 		[types[`${NAME}_REMOVE`]](state, entity) {
-			state.collection = state.collection.filter(e => e[_id] !== entity[_id])
+			const index = state.collection.findIndex(e => e[_id] == entity[_id])
+			if(index > -1){
+				state.collection = [ ...state.collection.slice(0, index), ...state.collection.slice(index+1) ]
+			}
 		},
 		[types[`${NAME}_REMOVE_FAIL`]](state, entity) {
 			state.collection = [ ...state.collection, entity ]
