@@ -32,6 +32,7 @@ IndexedDB wrapper for Vuejs based on Dexie
   ```
 # 0.1.10 BUGFIX
   RETURN Promise.reject()
+  BUGFIX #22
 
 # 0.1.4 Enhancement
   BUGFIX on listSelect vuex action
