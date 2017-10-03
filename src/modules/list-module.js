@@ -52,8 +52,12 @@ export default (name, options, db, api) => {
 	// actions
 	const actions = {
 		[`${name}Select`]({ commit, state }, payload) {
-			const index = state.collection.findIndex(e => e[_id] === payload[_id])
-			commit(types[`${NAME}_SELECT`], index)
+			if (payload) {
+				const index = state.collection.findIndex(e => e[_id] === payload[_id])
+				commit(types[`${NAME}_SELECT`], index)
+			} else {
+				commit(types[`${NAME}_SELECT`], -1)
+			}
 		},
 		[`${name}Load`]({ commit }, payload){
 			console.log('LOAD DATA')
@@ -191,6 +195,8 @@ export default (name, options, db, api) => {
 			const index = state.collection.findIndex(e => e[_id] == entity[_id])
 			if(index > -1){
 				state.collection = [ ...state.collection.slice(0, index), entity , ...state.collection.slice(index+1) ]
+			} else {
+				state.collection = [ ...state.collection, entity ]
 			}
 			state.loading = true
 		},
