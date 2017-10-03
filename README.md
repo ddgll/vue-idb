@@ -30,7 +30,9 @@ IndexedDB wrapper for Vuejs based on Dexie
     render: h => h(App)
   })
   ```
-  
+# 0.1.10 BUGFIX
+  RETURN Promise.reject()
+
 # 0.1.4 Enhancement
   BUGFIX on listSelect vuex action
   BUGFIX on toggleSelect vuex action

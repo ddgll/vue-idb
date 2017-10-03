@@ -79,7 +79,7 @@ export default (name, options, db, api) => {
 					return res.data
 				}, err => {
 					commit(types[`${NAME}_ADD_FAIL`], entity)
-					return err
+					return Promise.reject(err)
 				})
 			} else {
 				return Promise.resolve()
@@ -93,7 +93,7 @@ export default (name, options, db, api) => {
 					return res.data
 				}, err => {
 					commit(types[`${NAME}_UPDATE_FAIL`], res.data)
-					return err
+					return Promise.reject(err)
 				})
 			} else {
 				return Promise.resolve()
@@ -108,7 +108,7 @@ export default (name, options, db, api) => {
 				}, err => {
 					commit(types[`${NAME}_ADD`], payload)
 					commit(types[`${NAME}_SET_LOADING`], false)
-					return err
+					return Promise.reject(err)
 				})
 			} else {
 				return Promise.resolve()
