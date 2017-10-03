@@ -58,9 +58,13 @@ export default (name, options, db, api) => {
 
 	const blActions = {
 		[`${name}Select`]({ commit }, payload) {
-			db[name].where(_id).equals(payload.id).first().then((entity) => {
-				commit(types[`${NAME}_SELECT`], entity)
-			})
+			if (payload) {
+				db[name].where(_id).equals(payload[_id]).first().then((entity) => {
+					commit(types[`${NAME}_SELECT`], entity)
+				})
+			} else {
+				commit(types[`${NAME}_SELECT`], null)
+			}
 		},
 		[`${name}LoadResponse`]({ commit, dispatch, state }, payload){
 			if(!payload || !payload.length) return commit(types[`${NAME}_LOAD_SUCCESS`])
@@ -205,7 +209,7 @@ export default (name, options, db, api) => {
 	const blMutations = {
 		// SELECT 
 		[types[`${NAME}_SELECT`]] (state, entity) {
-			state.selected = { ...entity }
+			state.selected = entity !== null ? { ...entity } : null
 		},
 		// INFINITE
 		[types[`${NAME}_SET_INFINITE`]] (state, { iStart, iLimit, collection }) {
