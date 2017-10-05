@@ -46,16 +46,18 @@
 					</select>
 					<button type="button" @click="prev()" :disabled="page <= 1 || thinking">PREV</button> Page {{ page }} of {{ nbPages }} <button type="button" @click="next()" :disabled="page >= nbPages || thinking">NEXT</button>
 				</li>
-				<li v-for="test in bigs">
-					{{ test.caption }} <button type="button" @click="remove(test)" class="remove" :disabled="thinking">&times;</button>
+				<li v-for="test in bigs" :key="test.id" @click="bigsSelect(test)">
+					{{ test.caption }} <button type="button" @click.stop.prevent="remove(test)" class="remove" :disabled="thinking">&times;</button>
 				</li>
 			</ul>
 		</div>
 		<div style="width: calc(50% - 16px); padding: 8px; float: left;">
 			<button type="button" @click="handleScroll._reset()">RESET</button>
 			<div class="infinite" @scroll="handleScroll.scroll($event)" ref="infinite">
-					<div v-for="(test, index) in infinite"> {{ test.caption }} {{ index }} </div>
+				<div v-for="(test, index) in infinite"> {{ test.caption }} {{ index }} </div>
 			</div>
+			<button type="button" @click="bigsSelect(null)">CLEAR SELECTION</button>
+			<pre>{{ selected }}</pre>
 		</div>
 	</div>
 </template>
@@ -69,7 +71,7 @@ import _ from 'lodash'
 export default {
   name: 'app',
 	computed: {
-		...mapGetters({ bigs: 'getBigs', infinite: 'getBigsInfinite', thinking: 'getBigsThinking', count: 'getBigsCount', page: 'getBigsPage', nbPages: 'getBigsNbPages', limit: 'getBigsLimit' }),
+		...mapGetters({ bigs: 'getBigs', selected: 'getBigsSelected', infinite: 'getBigsInfinite', thinking: 'getBigsThinking', count: 'getBigsCount', page: 'getBigsPage', nbPages: 'getBigsNbPages', limit: 'getBigsLimit' }),
 	},
   data () {
     return {
@@ -85,7 +87,7 @@ export default {
 		this.handleScroll.unset()
 	},
 	methods: {
-		...mapActions({ bigsSetLimit: 'bigsSetLimit' }),
+		...mapActions({ bigsSetLimit: 'bigsSetLimit', bigsSelect: 'bigsSelect' }),
 		loadData (file){
       console.log('DELETE DB')
 			this.$store.commit('DELETE_INDEXED_DB', () => {

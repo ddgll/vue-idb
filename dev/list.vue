@@ -12,7 +12,7 @@
 						<option v-for="item in selection" :value="item.value">{{ item.label }}</option>
 					</select>
 				</li>
-				<li v-for="test in tests" :class="{'selected': selected === test.id}" @click="testsSelect">
+				<li v-for="test in tests" :class="{'selected': selected === test.id}" @click="testsSelect(test)">
 					{{ test.title }} <button type="button" @click.stop.prevent="remove(test)" class="remove">&times;</button>
 				</li>
 			</ul>
@@ -36,6 +36,8 @@
 					{{ test.title }} <button type="button" @click.stop.prevent="remove(test)" class="remove">&times;</button>
 				</li>
 			</ul>
+			<button type="button" @click="testsSelect(null)">CLEAR SELECTION</button>
+			<pre>{{ test }}</pre>
 		</div>
   </div>
 </template>
@@ -48,7 +50,7 @@ import { uuid } from '../src'
 export default {
   name: 'app',
 	computed: {
-		...mapGetters({ testsStore: 'getTests', selection: 'getTestsSelectable', bigs: 'getBigs' }),
+		...mapGetters({ testsStore: 'getTests', test: 'getTestsSelected', selection: 'getTestsSelectable', bigs: 'getBigs' }),
 	},
   data () {
     return {
