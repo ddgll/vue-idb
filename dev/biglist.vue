@@ -52,11 +52,12 @@
 			</ul>
 		</div>
 		<div style="width: calc(50% - 16px); padding: 8px; float: left;">
-			<button type="button" @click="handleScroll._reset()">RESET</button>
+			<button type="button" @click="handleScroll._reset()">RESET SCROLL</button>
 			<div class="infinite" @scroll="handleScroll.scroll($event)" ref="infinite">
-				<div v-for="(test, index) in infinite"> {{ test.caption }} {{ index }} </div>
+				<div v-for="(test, index) in infinite" :key="index"> {{ test.caption }} {{ index }} </div>
 			</div>
 			<button type="button" @click="bigsSelect(null)">CLEAR SELECTION</button>
+			<button type="button" @click="bigsReset()">RESET IDB</button>
 			<pre>{{ selected }}</pre>
 		</div>
 	</div>
@@ -87,7 +88,7 @@ export default {
 		this.handleScroll.unset()
 	},
 	methods: {
-		...mapActions({ bigsSetLimit: 'bigsSetLimit', bigsSelect: 'bigsSelect' }),
+		...mapActions({ bigsSetLimit: 'bigsSetLimit', bigsSelect: 'bigsSelect', bigsReset: 'bigsReset' }),
 		loadData (file){
       console.log('DELETE DB')
 			this.$store.commit('DELETE_INDEXED_DB', () => {

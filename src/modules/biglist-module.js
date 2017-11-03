@@ -57,6 +57,17 @@ export default (name, options, db, api) => {
 	let filterTimer = null
 
 	const blActions = {
+		[`${name}Reset`]({ commit, dispatch, state }) {
+			commit(types[`${NAME}_LOAD_SUCCESS`], [])
+			commit(types[`${NAME}_SELECT`], -1)
+			commit(types[`${NAME}_SET_LAST`], null)
+			commit(types[`${NAME}_SET_FILTER`], {})
+			commit(types[`${NAME}_SET_SORT`], { sort: _label, reverse: false })
+			return db[name].clear().then(() => {
+				dispatch(`${name}SetCount`)
+				dispatch(`${name}SetPage`, 1)
+			})
+		},
 		[`${name}Select`]({ commit }, payload) {
 			if (payload) {
 				db[name].where(_id).equals(payload[_id]).first().then((entity) => {
@@ -92,10 +103,11 @@ export default (name, options, db, api) => {
 				}
 			})
 		},
-		[`${name}Load`]({ commit, dispatch, state }){
+		[`${name}Load`]({ commit, dispatch, state }, payload){
+			const params = { ...payload, last: state.last }
 			commit(types[`${NAME}_LOAD`])
 			if(api && api.all){
-				return api.all(state.last).then(
+				return api.all(params).then(
 					res => dispatch(`${name}LoadResponse`, res.data),
 					err => commit(types[`${NAME}_LOAD_FAIL`], err)
 				)
