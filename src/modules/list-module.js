@@ -51,6 +51,13 @@ export default (name, options, db, api) => {
 
 	// actions
 	const actions = {
+		[`${name}Reset`]({ commit, state }) {
+			commit(types[`${NAME}_LOAD_SUCCESS`], [])
+			commit(types[`${NAME}_SELECT`], -1)
+			commit(types[`${NAME}_SET_LAST`], null)
+			commit(types[`${NAME}_SET_FILTER`], {})
+			commit(types[`${NAME}_SET_SORT`], { sort: _label, reverse: false })
+		},
 		[`${name}Select`]({ commit, state }, payload) {
 			if (payload) {
 				const index = state.collection.findIndex(e => e[_id] === payload[_id])

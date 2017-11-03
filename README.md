@@ -30,6 +30,10 @@ IndexedDB wrapper for Vuejs based on Dexie
     render: h => h(App)
   })
   ```
+# 0.1.11 BUGFIX
+  ADD xxxReset action
+  ADD payload to load action
+
 # 0.1.10 BUGFIX
   RETURN Promise.reject()
   BUGFIX #22
