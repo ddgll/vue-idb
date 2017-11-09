@@ -10,11 +10,13 @@ export default new VueIdb({
   database: 'bigtest',
   schemas: [
     { tests: 'id, title, created_at, updated_at' },
-    { bigs: 'uuid, caption, creation, update' }
+    { bigs: 'uuid, caption, creation, update' },
+    { dd: 'uuid, caption, creation, update' }
   ],
   options: {
     tests: { type: 'list', primary: 'id', label: 'title', updated_at: 'updated_at' },
-    bigs: { type: 'biglist', primary: 'uuid', label: 'caption', updated_at: 'update' }
+    bigs: { type: 'biglist', primary: 'uuid', label: 'caption', updated_at: 'update' },
+    dd: { type: 'biglist', primary: 'uuid', label: 'caption', updated_at: 'update' }
   },
   apis: {
     bigs: {
