@@ -73,7 +73,7 @@ if (process.env.NODE_ENV === 'production') {
     library: 'VueIdb',
     libraryTarget: 'umd'
   }
-  module.exports.devtool = '#source-map'
+  module.exports.devtool = '#cheap-module-source-map'
   module.exports.module.rules[0].options.loaders = {
     css: ExtractTextPlugin.extract({
       use: 'css-loader',

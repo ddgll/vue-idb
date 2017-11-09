@@ -21,10 +21,10 @@
 				<li>
 					<select v-model="selected">
 						<option>-Select-</option>
-						<option v-for="item in ordered()" :value="item.id">{{ item.title }}</option>
+						<option v-for="item in ordered()" :value="item.id" :key="item.id">{{ item.title }}</option>
 					</select>
 				</li>
-				<li v-for="test in tests" :class="{'selected': selected === test.id}">
+				<li v-for="test in tests" :class="{'selected': selected === test.id}" :key="test.id">
 					{{ test.title }} <button type="button" @click="remove(test)" class="remove">&times;</button>
 				</li>
 			</ul>

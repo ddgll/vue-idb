@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { some, isEmpty as _isEmpty, isObject } from 'lodash'
 
 export const deepFreeze = (obj) => {
   var propNames = Object.getOwnPropertyNames(obj);
@@ -34,12 +34,12 @@ export const jsUcfirst = (string) => string.charAt(0).toUpperCase() + string.sli
 
 
 export const isEmpty = (value) => {
-	if (_.isObject(value)) {
-		return !_.some( value, function(value, key) {
+	if (isObject(value)) {
+		return !some( value, function(value, key) {
 			return value !== undefined && String(value).length;
 		});
 	} 
-	return _.isEmpty(value);
+	return _isEmpty(value);
 }
 
 export class VIDB { }
