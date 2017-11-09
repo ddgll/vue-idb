@@ -30,6 +30,10 @@ IndexedDB wrapper for Vuejs based on Dexie
     render: h => h(App)
   })
   ```
+# 0.2.0 BUGFIX
+  BUGFIX on adding schemas on existing DB
+  UPDATES dependencies #32
+
 # 0.1.11 BUGFIX
   ADD xxxReset action
   ADD payload to load action

@@ -14,7 +14,7 @@ export default function (db, options) {
 		let prevState = _.cloneDeep(store.state)
 
 		for(let schema in options.hydrators){
-			const hydrated = await options.hydrators[schema]()
+			const hydrated = await options.hydrators[schema]().catch((e) => {})
 			const substate = { ...store.state[schema], ...hydrated }
 			store.replaceState({ ...store.state, [schema]: substate })
 			console.log('SCHEME', store.state)

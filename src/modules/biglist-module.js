@@ -4,7 +4,7 @@ import { arrayMax, jsUcfirst, isEmpty } from '../contants'
 import filterBy from '../filter-by'
 import filterByPromised from '../filter-by-promised'
 import orderBy from '../order-by'
-import _ from 'lodash'
+import { slice, isEqual } from 'lodash'
 
 export default (name, options, db, api) => {
 	const listModule = getListModule(name, options, db, api)
@@ -125,7 +125,7 @@ export default (name, options, db, api) => {
 					commit(types[`${NAME}_SET_INFINITE`], { iStart, iLimit, collection })
 				})
 			}else{
-				commit(types[`${NAME}_SET_INFINITE`], { iStart, iLimit, collection: _.slice(state.filtered, iStart, iStart + iLimit) })
+				commit(types[`${NAME}_SET_INFINITE`], { iStart, iLimit, collection: slice(state.filtered, iStart, iStart + iLimit) })
 			}
 		},
 		[`${name}SetPage`]({ commit, dispatch, state }, payload) {
@@ -144,7 +144,7 @@ export default (name, options, db, api) => {
 					}
 				})
 			}else{
-				commit(types[`${NAME}_SET_PAGE`], { page: payload, collection: _.slice(state.filtered, (payload-1)*state.limit, payload*state.limit) })
+				commit(types[`${NAME}_SET_PAGE`], { page: payload, collection: slice(state.filtered, (payload-1)*state.limit, payload*state.limit) })
 				commit(types[`${NAME}_THINKING`], false)
 			}
 		},
@@ -169,7 +169,7 @@ export default (name, options, db, api) => {
 			}
 		},
 		[`${name}SetSort`]({ commit, dispatch, state }, payload){
-			if(_.isEqual(payload, { sort: state.sort, reverse: state.reverse })) return
+			if(isEqual(payload, { sort: state.sort, reverse: state.reverse })) return
 			commit(types[`${NAME}_SET_SORT`], payload)
 			if(isEmpty(state.filter)){
 				dispatch(`${name}SetPage`, state.page)
@@ -182,7 +182,7 @@ export default (name, options, db, api) => {
 			dispatch(`${name}SetCount`)
 		},
 		[`${name}SetFilter`]({ commit, dispatch, state }, payload){
-			if(_.isEqual(payload, state.filter)) return
+			if(isEqual(payload, state.filter)) return
 			if(filterTimer) clearTimeout(filterTimer)
 			filterTimer = setTimeout(() => {
 				commit(types[`${NAME}_SET_FILTER`], payload)
