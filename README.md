@@ -7,6 +7,11 @@ IndexedDB wrapper for Vuejs based on Dexie
   ``` bash
   npm install vue-idb --save
   ```
+## Exemples
+
+  ``` bash
+  npm run dev
+  ```
 ## Usage
 
   ``` js
