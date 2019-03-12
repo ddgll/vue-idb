@@ -28,7 +28,12 @@ IndexedDB wrapper for Vuejs based on Dexie
     version: 2,
     schemas: [
       { cars: 'id, name, created_at, updated_at'},
-    ]
+    ],
+    upgrade: function(tx) {
+      return tx.tests.toCollection().modify(item => {
+        // modify your table
+      })
+    }
   })
 
   new Vue({

@@ -33,12 +33,16 @@ export default new VueIdb(dbName, [{
   options: {
 
   }
-},{
+},
+{
   version: 3,
   schemas: [
-    { kawka: 'uuid, caption' }
+    { tests: 'id, title, created_at, updated_at, name' }
   ],
-  options: {
-      kawka: { type: 'list', primary: "uuid", label: "caption"}
+  upgrade: function (tx) {
+    return tx.tests.toCollection().modify(item => {
+      item.name = item.title.split(" ")[0]
+    })
   }
-}])
+}
+])
