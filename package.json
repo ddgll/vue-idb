@@ -1,6 +1,6 @@
 {
   "name": "vue-idb",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "IndexedDB wrapper for Vuejs based on Dexie",
   "main": "dist/index.js",
   "author": "David Grill <grilldotcom@gmail.com>",

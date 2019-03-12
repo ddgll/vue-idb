@@ -26,18 +26,23 @@ export default class VueIdb {
   static _plugin
   static _options
 
-  constructor (options) {
-		this._initDB(options)
+  constructor (dbName, migrations) {
+		this._initDB(dbName, migrations)
   }
 
-  _initDB (options) {
-    if(!VueIdb._options) VueIdb._options = options
+  _initDB (dbName, migrations) {
+    if(!VueIdb._options) VueIdb._options = migrations
     if(VueIdb._db) return
-    if(!options.schemas){
-      console.error('VueIdb configuration error: schemas must be set')
+    migrations.forEach(migration => {
+      if(!migration.schemas) {
+        console.error('VueIdb configuration error: schemas must be set in each version')
+      }
+    });
+    if(!dbName) {
+      console.error('VueIdb configuration error: database name need to be present')
     }
-    VueIdb._db = new Dexie(options.database ? options.database : 'database')
-    dbOpen(VueIdb._db, options.schemas, options.version ? options.version : 1)
+    VueIdb._db = new Dexie(dbName)
+    dbOpen(VueIdb._db, migrations)
   }
 
   get plugin () {

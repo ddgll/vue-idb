@@ -5,9 +5,10 @@ Vue.use(VueIdb)
 
 import axios from 'axios'
 
-export default new VueIdb({
+const dbName = "bigtest"
+
+export default new VueIdb(dbName, [{
   version: 1,
-  database: 'bigtest',
   schemas: [
     { tests: 'id, title, created_at, updated_at' },
     { bigs: 'uuid, caption, creation, update' },
@@ -23,4 +24,25 @@ export default new VueIdb({
       all: () => axios.get('/dev/data/bigdata.json')
     }
   }
-})
+},
+{
+  version: 2,
+  schemas: [
+    { bigs: 'uuid, caption, creation, update, newField' }
+  ],
+  options: {
+
+  }
+},
+{
+  version: 3,
+  schemas: [
+    { tests: 'id, title, created_at, updated_at, name' }
+  ],
+  upgrade: function (tx) {
+    return tx.tests.toCollection().modify(item => {
+      item.name = item.title.split(" ")[0]
+    })
+  }
+}
+])

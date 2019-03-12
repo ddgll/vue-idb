@@ -33,7 +33,7 @@ export default function (db, options) {
 
 			if(mutation.type === 'DELETE_INDEXED_DB'){
 				db.delete().then(() => {
-					dbOpen(db, options.schemas, options.version ? options.version : 1)
+					dbOpen(db, options)
 					if(typeof mutation.payload === 'function'){
 						mutation.payload()
 					}

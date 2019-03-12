@@ -15,13 +15,25 @@ IndexedDB wrapper for Vuejs based on Dexie
 
   Vue.use(VueIdb)
 
-  const idb = new VueIdb({
+  const dbName = "database"
+
+  const idb = new VueIdb(database, [{
     version: 1,
-    database: 'test',
     schemas: [
       { tests: 'id, title, created_at, updated_at' },
 			{ posts: 'id, owner' }
     ]
+  },
+  {
+    version: 2,
+    schemas: [
+      { cars: 'id, name, created_at, updated_at'},
+    ],
+    upgrade: function(tx) {
+      return tx.tests.toCollection().modify(item => {
+        // modify your table
+      })
+    }
   })
 
   new Vue({
@@ -29,25 +41,3 @@ IndexedDB wrapper for Vuejs based on Dexie
     idb: idb,
     render: h => h(App)
   })
-  ```
-# 0.2.0 BUGFIX
-  BUGFIX on adding schemas on existing DB
-  UPDATES dependencies #32
-
-# 0.1.11 BUGFIX
-  ADD xxxReset action
-  ADD payload to load action
-
-# 0.1.10 BUGFIX
-  RETURN Promise.reject()
-  BUGFIX #22
-
-# 0.1.4 Enhancement
-  BUGFIX on listSelect vuex action
-  BUGFIX on toggleSelect vuex action
-  
-# 0.1.3 Enhancement
-  Add Dexie DB version in options
-
-# 0.1.2 Enhancement
-  Add Select action in biglist
